@@ -3,9 +3,9 @@ package org.study.pmqc.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.study.pmqc.model.Consulta;
-import org.study.pmqc.model.DTO.ConsultaTO;
-import org.study.pmqc.model.DTO.EnsaioTO;
+import org.study.pmqc.model.DTO.EmpresaTO;
 import org.study.pmqc.model.DTO.EnderecoTO;
+import org.study.pmqc.model.DTO.EnsaioTO;
 import org.study.pmqc.model.enums.TipoCombustivel;
 
 import java.io.BufferedReader;
@@ -21,9 +21,9 @@ import java.util.List;
 
 public class Util {
 
-    private  List<String> idsSalvos;
+    private List<String> idsSalvos;
 
-    public void getFile() {
+    public String getFile() {
         try {
             final BufferedReader reader = consultarArquivos();
             int qtdLinhas = 0;
@@ -40,9 +40,7 @@ public class Util {
                         c.setIdNumeric(objetos[i++]);
                         c.setGrupoProduto(TipoCombustivel.valueOf(objetos[i++].toUpperCase()));
                         c.setProduto(objetos[i++]);
-                        c.setRazaoSocialPosto(objetos[i++]);
-                        c.setCnpjPosto(objetos[i++]);
-                        c.setDistribuidora(objetos[i++]);
+                        c.setEmpresa(new EmpresaTO(objetos[i++], objetos[i++], objetos[i++]));
                         c.setLatitude(objetos[i++]);
                         c.setLongitude(objetos[i++]);
                         c.setEndereco(new EnderecoTO(objetos[i++], objetos[i++], objetos[i++]));
@@ -55,11 +53,11 @@ public class Util {
                 qtdLinhas++;
             }
             reader.close();
-            ObjectMapper mapper = new ObjectMapper();
-            ConsultaTO consulta =  mapper.readValue(conteudo.toString(), ConsultaTO.class);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return "TESTE";
     }
     private Boolean verificarIdsDuplicados(final String idNumerico) {
         for (String id : idsSalvos) {
@@ -77,8 +75,5 @@ public class Util {
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.239.68.1", 3128));
         URLConnection con = url.openConnection(proxy);
         return new BufferedReader(new InputStreamReader( con.getInputStream()));
-    }
-    public static void main(String[] args) throws IOException {
-        getFile();
     }
 }

@@ -1,5 +1,6 @@
 package org.study.pmqc.model;
 
+import org.study.pmqc.model.DTO.EmpresaTO;
 import org.study.pmqc.model.DTO.EnsaioTO;
 import org.study.pmqc.model.DTO.EnderecoTO;
 import org.study.pmqc.model.enums.TipoCombustivel;
@@ -14,12 +15,11 @@ public class Consulta {
     private String idNumeric;  // Identificador único das amostras.
     private TipoCombustivel grupoProduto;  // TEXTO Identifica a família de combustível (Gasolina, Diesel ou Etanol).
     private String produto;  //   Identifica o produto específico de uma dada família de combustível. Por exemplo, para Gasolina há os produtos: Gasolina C Comum, Gasolina C Aditivada e Gasolina C Premium.
-    private String RazaoSocialPosto;  //  Razão Social do Posto Revendedor de Combustível.
-    private String CnpjPosto; // CNPJ do Posto Revendedor de Combustível.
-    private String distribuidora; //; Distribuidora associada ao Posto Revendedor de Combustível
+
     private String latitude; // Latitude do Posto Revendedor de Combustível
     private String longitude; // Longitude do Posto Revendedor de Combustível
 
+    private EmpresaTO empresa;
     private List<EnsaioTO> ensaios;
     private EnderecoTO endereco;
 
@@ -55,31 +55,6 @@ public class Consulta {
     public void setProduto(String produto) {
         this.produto = produto;
     }
-
-    public String getRazaoSocialPosto() {
-        return RazaoSocialPosto;
-    }
-
-    public void setRazaoSocialPosto(String razaoSocialPosto) {
-        RazaoSocialPosto = razaoSocialPosto;
-    }
-
-    public String getCnpjPosto() {
-        return CnpjPosto;
-    }
-
-    public void setCnpjPosto(String cnpjPosto) {
-        CnpjPosto = cnpjPosto;
-    }
-
-    public String getDistribuidora() {
-        return distribuidora;
-    }
-
-    public void setDistribuidora(String distribuidora) {
-        this.distribuidora = distribuidora;
-    }
-
 
     public String getLatitude() {
         return latitude;
@@ -119,4 +94,11 @@ public class Consulta {
         this.endereco = endereco;
     }
 
+    public EmpresaTO getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(EmpresaTO empresa) {
+        this.empresa = empresa;
+    }
 }
