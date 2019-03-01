@@ -13,4 +13,13 @@ public enum TipoCombustivel {
     public String getCombustivel() {
         return combustivel;
     }
+
+    public static TipoCombustivel fromString(String text) {
+        for (TipoCombustivel b : TipoCombustivel.values()) {
+            if (b.combustivel.equalsIgnoreCase(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }

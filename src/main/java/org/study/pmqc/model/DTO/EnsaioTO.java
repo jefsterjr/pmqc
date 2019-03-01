@@ -10,7 +10,7 @@ public class EnsaioTO {
     private Boolean confome;
 
     public EnsaioTO(final String ensaio, final String resultado, final String unidadeEnsaio, final String confome) {
-        this.ensaio = TipoEnsaio.valueOf(ensaio);
+        this.ensaio = TipoEnsaio.fromString(ensaio);
         this.resultado = resultado;
         this.unidadeEnsaio = unidadeEnsaio;
         setConfome(confome);
