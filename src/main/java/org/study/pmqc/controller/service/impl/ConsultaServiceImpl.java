@@ -170,7 +170,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 
     private BufferedReader consultarArquivos(final String urlString) throws IOException {
         final URL url = new URL(urlString);
-//        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.239.68.1", 3128));
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.239.68.1", 3128));
         URLConnection con = url.openConnection(proxy);
         return new BufferedReader(new InputStreamReader(con.getInputStream()));
     }
