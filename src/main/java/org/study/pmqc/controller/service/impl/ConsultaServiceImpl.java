@@ -1,15 +1,17 @@
-package org.study.pmqc.service.impl;
+package org.study.pmqc.controller.service.impl;
 
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.study.pmqc.controller.service.ConsultaService;
 import org.study.pmqc.model.DTO.ConsultaTO;
 import org.study.pmqc.model.DTO.EnsaioTO;
 import org.study.pmqc.model.entities.*;
 import org.study.pmqc.model.enums.TipoCombustivel;
+import org.study.pmqc.model.repository.ArquivoRepository;
 import org.study.pmqc.model.repository.EstabelecimentoRepository;
-import org.study.pmqc.service.ConsultaService;
+import org.study.pmqc.model.repository.ProdutoRepository;
 
-import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,8 +20,12 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ConsultaServiceImpl implements ConsultaService {
@@ -27,14 +33,23 @@ public class ConsultaServiceImpl implements ConsultaService {
     @Autowired
     private EstabelecimentoRepository estabelecimentoRepository;
 
+    @Autowired
+    private ArquivoRepository arquivoRepository;
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
+
     private List<String> idsSalvos;
 
     @Override
     public List<ConsultaTO> getFile() {
+
+        final List<String> urls = getUrls();
         List<ConsultaTO> consultas = new ArrayList<>();
         idsSalvos = new ArrayList<>();
-        gerReaders().forEach(reader -> {
-            try{
+        urls.forEach(url -> {
+            try {
+                final BufferedReader reader = gerReader(url);
                 String linha;
                 int qtdLinhas = 0;
                 while ((linha = reader.readLine()) != null) {
@@ -75,19 +90,21 @@ public class ConsultaServiceImpl implements ConsultaService {
                     qtdLinhas++;
                     salvarEstabelecimento(consultas);
                 }
+                salvarArquivo( url.trim().substring(49));
                 reader.close();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
-
         });
+
 
         return consultas;
     }
 
-    @Transactional
-    private void salvarEstabelecimento(List<ConsultaTO> consultas) {
+
+    private void salvarEstabelecimento(final List<ConsultaTO> consultas) {
+
         consultas.forEach(consultaTO -> {
             Estabelecimento estabelecimento = new Estabelecimento();
 
@@ -102,10 +119,16 @@ public class ConsultaServiceImpl implements ConsultaService {
             amostra.setCodigoAmostra(consultaTO.getIdNumeric());
             amostra.setData(consultaTO.getDataColeta());
 
-            Produto produto = new Produto();
-            produto.setDescricao(consultaTO.getProduto());
-            produto.setTipo(consultaTO.getGrupoProduto());
-            amostra.setProduto(produto);
+            Optional<Produto> optProduto = produtoRepository.findFirstByDescricaoAndTipo(consultaTO.getProduto(), consultaTO.getGrupoProduto());
+            if(optProduto.isPresent()){
+                amostra.setProduto(optProduto.get());
+            }else{
+                Produto produto = new Produto();
+                produto.setDescricao(consultaTO.getProduto());
+                produto.setTipo(consultaTO.getGrupoProduto());
+                amostra.setProduto(produto);
+            }
+
 
             consultaTO.getEnsaios().forEach(ensaioTO -> {
                 Ensaio ensaio = new Ensaio();
@@ -113,6 +136,7 @@ public class ConsultaServiceImpl implements ConsultaService {
                 ensaio.setConfome(ensaioTO.getConfome());
                 ensaio.setResultado(ensaioTO.getResultado());
                 ensaio.setTipo(ensaioTO.getEnsaio());
+                ensaio.setUnidadeEnsaio(ensaioTO.getUnidadeEnsaio());
                 amostra.addEnsaios(ensaio);
             });
 
@@ -121,19 +145,22 @@ public class ConsultaServiceImpl implements ConsultaService {
         });
     }
 
-    private List<BufferedReader> gerReaders() {
-        List<BufferedReader> listaReaders = new ArrayList<>();
-        getUrls().forEach(url -> {
-            try {
-                listaReaders.add(consultarArquivos(url));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-        return listaReaders;
+    private void salvarArquivo(String nomeArquivo) {
+        Arquivo arquivo = new Arquivo();
+        arquivo.setNome(nomeArquivo);
+        arquivo.setDataImportacao(LocalDate.now());
+        Year anoArquivo = Year.of(Integer.valueOf(nomeArquivo.trim().substring(5, 9)));
+        Month mesArquivo = Month.of(Integer.valueOf(nomeArquivo.trim().substring(10, 12)));
+        arquivo.setDataReferencia(LocalDateTime.of(anoArquivo.getValue(), mesArquivo.getValue(), 1, 0, 0, 0).toLocalDate());
+
+        arquivoRepository.save(arquivo);
     }
 
-    private EnsaioTO getEnsaio(String[] objetos) {
+    private BufferedReader gerReader(String url) throws IOException {
+        return consultarArquivos(url);
+    }
+
+    private EnsaioTO getEnsaio(final String[] objetos) {
         return new EnsaioTO(objetos[15].toUpperCase(), objetos[16], objetos[17], objetos[18]);
     }
 
@@ -143,19 +170,42 @@ public class ConsultaServiceImpl implements ConsultaService {
 
     private BufferedReader consultarArquivos(final String urlString) throws IOException {
         final URL url = new URL(urlString);
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.239.68.1", 3128));
+//        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("10.239.68.1", 3128));
         URLConnection con = url.openConnection(proxy);
         return new BufferedReader(new InputStreamReader(con.getInputStream()));
     }
 
     private List<String> getUrls() {
+
+        final String urlBase = "http://www.anp.gov.br/arquivos/dadosabertos/PMQC/";
         List<String> urls = new ArrayList<>();
-//        for (int ano = 2016; ano < LocalDateTime.now().getYear(); ano++) {
-//            for (int mes = 1; mes < 12; mes++) {
-//                urls.add("http://www.anp.gov.br/arquivos/dadosabertos/PMQC/PMQC_" + ano + "_" + (Integer.toString(mes).length() == 2 ? mes : "0" + mes) + ".csv");
-                urls.add("http://www.anp.gov.br/arquivos/dadosabertos/PMQC/PMQC_2019_01.csv");
-//            }
-//        }
+        final Optional<Arquivo> arquivo = arquivoRepository.findTopByDataReferenciaOrderByDataReferenciaAsc(LocalDate.now().withDayOfMonth(1));
+        getNomesArquivos(arquivo).forEach(nomeArquivo -> {
+            urls.add(urlBase + nomeArquivo);
+        });
         return urls;
+    }
+
+    private List<String> getNomesArquivos(final Optional<Arquivo> arquivo) {
+        int anoBase = 2016;
+
+        List<String> nomes = new ArrayList<>();
+        if (arquivo.isPresent()) {
+            anoBase = arquivo.get().getDataReferencia().getYear();
+            for (int ano = anoBase; ano < LocalDateTime.now().getYear(); ano++) {
+                int mes = 1;
+                for (mes = arquivo.get().getDataReferencia().getMonthValue(); mes <= 12; mes++) {
+                    nomes.add("PMQC_" + ano + "_" + (Integer.toString(mes).length() == 2 ? mes : "0" + mes) + ".csv");
+                }
+            }
+        } else {
+            for (int ano = anoBase; ano < LocalDateTime.now().getYear(); ano++) {
+                for (int mes = 1; mes <= 12; mes++) {
+                    nomes.add("PMQC_" + ano + "_" + (Integer.toString(mes).length() == 2 ? mes : "0" + mes) + ".csv");
+                }
+            }
+        }
+
+        return nomes;
     }
 }

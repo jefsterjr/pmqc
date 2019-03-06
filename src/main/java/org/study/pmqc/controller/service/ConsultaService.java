@@ -1,4 +1,4 @@
-package org.study.pmqc.service;
+package org.study.pmqc.controller.service;
 
 
 import org.study.pmqc.model.DTO.ConsultaTO;

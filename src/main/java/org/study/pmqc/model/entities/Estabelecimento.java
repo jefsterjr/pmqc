@@ -22,7 +22,7 @@ public class Estabelecimento {
     @Column(name = "distribuidora")
     private String distribuidora;
 
-    @OneToOne(targetEntity = Endereco.class, cascade = CascadeType.ALL, mappedBy = "estabelecimento")
+    @OneToOne(targetEntity = Endereco.class, cascade = CascadeType.ALL)
     private Endereco endereco;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "estabelecimento")

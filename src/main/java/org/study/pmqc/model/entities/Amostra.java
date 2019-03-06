@@ -25,7 +25,7 @@ public class Amostra {
     @Column(name = "data_amostra")
     private LocalDate data;
 
-    @OneToOne(mappedBy = "amostra", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     private Produto produto;
 
     @JsonIgnore

@@ -29,6 +29,8 @@ public class ConsultaTO {
     private String regiao;
     private String municipio;
 
+    private String arquivo;
+
     public LocalDate getDataColeta() {
         return dataColeta;
     }
@@ -160,5 +162,13 @@ public class ConsultaTO {
 
     public void setBairro(String bairro) {
         this.bairro = bairro;
+    }
+
+    public String getArquivo() {
+        return arquivo;
+    }
+
+    public void setArquivo(String arquivo) {
+        this.arquivo = arquivo;
     }
 }

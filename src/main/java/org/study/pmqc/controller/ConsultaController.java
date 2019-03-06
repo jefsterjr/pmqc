@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.study.pmqc.service.ConsultaService;
+import org.study.pmqc.controller.service.ConsultaService;
 
 @RestController
 @RequestMapping("/consulta")

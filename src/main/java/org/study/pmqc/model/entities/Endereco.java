@@ -36,7 +36,7 @@ public class Endereco {
     }
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(mappedBy = "endereco")
     private Estabelecimento estabelecimento;
 
     public Integer getId() {

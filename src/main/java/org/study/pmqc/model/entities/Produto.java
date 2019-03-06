@@ -22,7 +22,7 @@ public class Produto {
     private TipoCombustivel tipo;
 
     @JsonIgnore
-    @OneToOne
+    @OneToOne(mappedBy = "produto")
     private Amostra amostra;
 
     public Integer getId() {
