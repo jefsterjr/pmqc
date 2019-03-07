@@ -1,4 +1,4 @@
-package org.study.pmqc.model.DTO;
+package org.study.pmqc.model.dto;
 
 import org.study.pmqc.model.enums.TipoCombustivel;
 

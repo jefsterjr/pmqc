@@ -1,4 +1,4 @@
-package org.study.pmqc.model.DTO;
+package org.study.pmqc.model.dto;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package org.study.pmqc.model.DTO;
+package org.study.pmqc.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;

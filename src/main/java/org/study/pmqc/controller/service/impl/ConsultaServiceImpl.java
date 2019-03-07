@@ -1,10 +1,12 @@
 package org.study.pmqc.controller.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.study.pmqc.controller.service.ConsultaService;
-import org.study.pmqc.model.DTO.ConsultaTO;
-import org.study.pmqc.model.DTO.EnsaioTO;
+import org.study.pmqc.model.dto.ConsultaTO;
+import org.study.pmqc.model.dto.EnsaioTO;
 import org.study.pmqc.model.entities.Amostra;
 import org.study.pmqc.model.entities.Arquivo;
 import org.study.pmqc.model.entities.Endereco;
@@ -16,6 +18,7 @@ import org.study.pmqc.model.repository.ArquivoRepository;
 import org.study.pmqc.model.repository.EstabelecimentoRepository;
 import org.study.pmqc.model.repository.ProdutoRepository;
 
+import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,8 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class ConsultaServiceImpl implements ConsultaService {
+@Component
+public class ConsultaServiceImpl {
 
     @Autowired
     private EstabelecimentoRepository estabelecimentoRepository;
@@ -45,7 +48,10 @@ public class ConsultaServiceImpl implements ConsultaService {
 
     private List<String> idsSalvos;
 
-    @Override
+
+    private static final String TIME_ZONE = "America/Sao_Paulo";
+
+    @Scheduled(cron="0 48 17 7 * ?", zone = TIME_ZONE)
     public List<ConsultaTO> getFile() {
 
         final List<String> urls = getUrls();
@@ -93,6 +99,11 @@ public class ConsultaServiceImpl implements ConsultaService {
                     }
                     qtdLinhas++;
                     salvarEstabelecimento(consultas);
+                    System.out.println(qtdLinhas);
+                    if(qtdLinhas == 100){
+                        break;
+
+                    }
                 }
                 salvarArquivo( url.trim().substring(49));
                 reader.close();
@@ -106,7 +117,7 @@ public class ConsultaServiceImpl implements ConsultaService {
         return consultas;
     }
 
-
+    @Transactional
     private void salvarEstabelecimento(final List<ConsultaTO> consultas) {
 
         consultas.forEach(consultaTO -> {
@@ -123,15 +134,15 @@ public class ConsultaServiceImpl implements ConsultaService {
             amostra.setCodigoAmostra(consultaTO.getIdNumeric());
             amostra.setData(consultaTO.getDataColeta());
 
-            Optional<Produto> optProduto = produtoRepository.findFirstByDescricaoAndTipo(consultaTO.getProduto(), consultaTO.getGrupoProduto());
-            if(optProduto.isPresent()){
-                amostra.setProduto(optProduto.get());
-            }else{
+//            Optional<Produto> optProduto = produtoRepository.findFirstByDescricaoAndTipo(consultaTO.getProduto(), consultaTO.getGrupoProduto());
+//            if(optProduto.isPresent()){
+//                amostra.setProduto(optProduto.get());
+//            }else{
                 Produto produto = new Produto();
                 produto.setDescricao(consultaTO.getProduto());
                 produto.setTipo(consultaTO.getGrupoProduto());
                 amostra.setProduto(produto);
-            }
+//            }
 
 
             consultaTO.getEnsaios().forEach(ensaioTO -> {
@@ -181,6 +192,7 @@ public class ConsultaServiceImpl implements ConsultaService {
 
     private List<String> getUrls() {
 
+//        final String urlBase = "http://www.anp.gov.br/images/dadosabertos/PMQC/";
         final String urlBase = "http://www.anp.gov.br/arquivos/dadosabertos/PMQC/";
         List<String> urls = new ArrayList<>();
         final Optional<Arquivo> arquivo = arquivoRepository.findTopByDataReferenciaOrderByDataReferenciaAsc(LocalDate.now().withDayOfMonth(1));
@@ -209,7 +221,8 @@ public class ConsultaServiceImpl implements ConsultaService {
                 }
             }
         }
-
-        return nomes;
+        List<String> nommesTeste= new ArrayList<>();
+        nommesTeste.add("PMQC_2019_01.csv");
+        return nommesTeste;
     }
 }
