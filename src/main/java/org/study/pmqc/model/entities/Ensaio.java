@@ -1,11 +1,27 @@
 package org.study.pmqc.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.study.pmqc.model.enums.TipoEnsaio;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-
+@EqualsAndHashCode
+@ToString
+@Getter
+@Setter
 @Entity
 @Table(name = "ensaio")
 public class Ensaio {
@@ -33,51 +49,4 @@ public class Ensaio {
     @JoinColumn(name = "amostra_id")
     private Amostra amostra;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public TipoEnsaio getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoEnsaio tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getResultado() {
-        return resultado;
-    }
-
-    public void setResultado(String resultado) {
-        this.resultado = resultado;
-    }
-
-    public String getUnidadeEnsaio() {
-        return unidadeEnsaio;
-    }
-
-    public void setUnidadeEnsaio(String unidadeEnsaio) {
-        this.unidadeEnsaio = unidadeEnsaio;
-    }
-
-    public Boolean getConfome() {
-        return confome;
-    }
-
-    public void setConfome(Boolean confome) {
-        this.confome = confome;
-    }
-
-    public Amostra getAmostra() {
-        return amostra;
-    }
-
-    public void setAmostra(Amostra amostra) {
-        this.amostra = amostra;
-    }
 }

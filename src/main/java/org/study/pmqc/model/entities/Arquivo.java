@@ -1,8 +1,22 @@
 package org.study.pmqc.model.entities;
 
-import javax.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDate;
 
+@EqualsAndHashCode
+@ToString
+@Getter
+@Setter
 @Entity
 @Table(name = "arquivo")
 public class Arquivo {
@@ -21,35 +35,4 @@ public class Arquivo {
     @Column(name = "data_importacao")
     private LocalDate dataImportacao;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public LocalDate getDataReferencia() {
-        return dataReferencia;
-    }
-
-    public void setDataReferencia(LocalDate dataReferencia) {
-        this.dataReferencia = dataReferencia;
-    }
-
-    public LocalDate getDataImportacao() {
-        return dataImportacao;
-    }
-
-    public void setDataImportacao(LocalDate dataImportacao) {
-        this.dataImportacao = dataImportacao;
-    }
 }

@@ -1,12 +1,29 @@
 package org.study.pmqc.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode
+@ToString
+@Getter
+@Setter
 @Entity
 @Table(name = "amostra")
 public class Amostra {
@@ -32,58 +49,9 @@ public class Amostra {
     @ManyToOne
     private Estabelecimento estabelecimento;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getCodigoAmostra() {
-        return codigoAmostra;
-    }
-
-    public void setCodigoAmostra(String codigoAmostra) {
-        this.codigoAmostra = codigoAmostra;
-    }
-
-    public List<Ensaio> getEnsaios() {
-        return ensaios;
-    }
-
-    public void setEnsaios(List<Ensaio> ensaios) {
-        this.ensaios = ensaios;
-    }
-
 
     public void addEnsaios(Ensaio ensaio) {
         if (this.ensaios == null) this.ensaios = new ArrayList<>();
         this.ensaios.add(ensaio);
     }
-
-    public LocalDate getData() {
-        return data;
-    }
-
-    public void setData(LocalDate data) {
-        this.data = data;
-    }
-
-    public Produto getProduto() {
-        return produto;
-    }
-
-    public void setProduto(Produto produto) {
-        this.produto = produto;
-    }
-
-    public Estabelecimento getEstabelecimento() {
-        return estabelecimento;
-    }
-
-    public void setEstabelecimento(Estabelecimento estabelecimento) {
-        this.estabelecimento = estabelecimento;
-    }
-
 }

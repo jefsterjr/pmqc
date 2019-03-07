@@ -1,9 +1,27 @@
 package org.study.pmqc.model.entities;
 
-import javax.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode
+@ToString
+@Getter
+@Setter
 @Entity
 @Table(name = "estabelecimento")
 public class Estabelecimento {
@@ -28,56 +46,10 @@ public class Estabelecimento {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "estabelecimento")
     private List<Amostra> amostras;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getRazaoSocialPosto() {
-        return razaoSocialPosto;
-    }
-
-    public void setRazaoSocialPosto(String razaoSocialPosto) {
-        this.razaoSocialPosto = razaoSocialPosto;
-    }
-
-    public String getCnpjPosto() {
-        return cnpjPosto;
-    }
-
-    public void setCnpjPosto(String cnpjPosto) {
-        this.cnpjPosto = cnpjPosto;
-    }
-
-    public String getDistribuidora() {
-        return distribuidora;
-    }
-
-    public void setDistribuidora(String distribuidora) {
-        this.distribuidora = distribuidora;
-    }
-
-    public List<Amostra> getAmostras() {
-        return amostras;
-    }
-
-    public void setAmostras(List<Amostra> amostras) {
-        this.amostras = amostras;
-    }
 
     public void addAmostras(Amostra amostra) {
         if (this.amostras == null) this.amostras = new ArrayList<>();
         this.amostras.add(amostra);
     }
 
-    public Endereco getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco) {
-        this.endereco = endereco;
-    }
 }

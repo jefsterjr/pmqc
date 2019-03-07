@@ -1,12 +1,16 @@
 package org.study.pmqc.controller.service.impl;
 
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.study.pmqc.controller.service.ConsultaService;
 import org.study.pmqc.model.DTO.ConsultaTO;
 import org.study.pmqc.model.DTO.EnsaioTO;
-import org.study.pmqc.model.entities.*;
+import org.study.pmqc.model.entities.Amostra;
+import org.study.pmqc.model.entities.Arquivo;
+import org.study.pmqc.model.entities.Endereco;
+import org.study.pmqc.model.entities.Ensaio;
+import org.study.pmqc.model.entities.Estabelecimento;
+import org.study.pmqc.model.entities.Produto;
 import org.study.pmqc.model.enums.TipoCombustivel;
 import org.study.pmqc.model.repository.ArquivoRepository;
 import org.study.pmqc.model.repository.EstabelecimentoRepository;
