@@ -1,6 +1,5 @@
 package org.study.pmqc.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @EqualsAndHashCode
@@ -26,7 +24,7 @@ import javax.persistence.Table;
 public class Produto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
@@ -36,9 +34,5 @@ public class Produto {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo")
     private TipoCombustivel tipo;
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "produto")
-    private Amostra amostra;
 
 }

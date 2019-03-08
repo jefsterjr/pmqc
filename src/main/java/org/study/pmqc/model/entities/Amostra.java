@@ -1,18 +1,17 @@
 package org.study.pmqc.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -29,26 +28,22 @@ import java.util.List;
 public class Amostra {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
     @Column(name = "codigo_amostra")
     private String codigoAmostra;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "amostra")
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "amostra_id")
     private List<Ensaio> ensaios;
 
     @Column(name = "data_amostra")
     private LocalDate data;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Produto produto;
-
-    @JsonIgnore
-    @ManyToOne
-    private Estabelecimento estabelecimento;
-
 
     public void addEnsaios(Ensaio ensaio) {
         if (this.ensaios == null) this.ensaios = new ArrayList<>();

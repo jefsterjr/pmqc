@@ -1,6 +1,5 @@
 package org.study.pmqc.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @NoArgsConstructor
@@ -25,7 +23,7 @@ import javax.persistence.Table;
 public class Endereco {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "logradouro")
@@ -50,9 +48,5 @@ public class Endereco {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "endereco")
-    private Estabelecimento estabelecimento;
 
 }
