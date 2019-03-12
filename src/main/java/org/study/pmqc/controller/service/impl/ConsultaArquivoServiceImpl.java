@@ -56,7 +56,7 @@ public class ConsultaArquivoServiceImpl implements ConsultaArquivoService {
 
     private static final Logger logger = LogManager.getLogger(ConsultaTask.class);
 
-    private List<String> idsSalvos;
+    private List<String> idsSalvos = new ArrayList<>();
 
 
     private EnsaioTO getEnsaio(final String[] objetos) {
@@ -74,7 +74,7 @@ public class ConsultaArquivoServiceImpl implements ConsultaArquivoService {
         final Optional<Arquivo> arquivo = arquivoRepository.findTopByDataReferenciaOrderByDataReferenciaAsc(LocalDate.now().withDayOfMonth(1));
 
         getNomesArquivos(arquivo).forEach((nomeArquivo, data) -> {
-            if (data.isAfter(LocalDateTime.of(2018, 11, 1, 1, 1))) {
+            if (data.isAfter(LocalDateTime.of(2018, 7, 1, 1, 1))) {
                 urlBase.set("http://www.anp.gov.br/arquivos/dadosabertos/PMQC/");
             }
             urls.add(urlBase + nomeArquivo);
@@ -172,42 +172,40 @@ public class ConsultaArquivoServiceImpl implements ConsultaArquivoService {
         while ((linha = reader.readLine()) != null) {
             ConsultaTO consulta;
             String[] objetos = linha.split(";");
-            if (objetos[13].equals("GO")) {
-                if (qtdLinhas != 0) {
+            if (qtdLinhas != 0) {
 
-                    if (!verificarIdsInserido(objetos[1])) {
-                        consulta = new ConsultaTO();
-                        consulta.setDataColeta(LocalDate.parse(objetos[0]));
-                        consulta.setIdNumeric(objetos[1]);
-                        consulta.setGrupoProduto(TipoCombustivel.fromString(objetos[2].toUpperCase()));
-                        consulta.setProduto(objetos[3]);
-                        consulta.setRazaoSocialPosto(objetos[4]);
-                        consulta.setCnpjPosto(objetos[5].replace(".", "").replace("-", "").replace("/", ""));
-                        consulta.setDistribuidora(objetos[6]);
-                        consulta.setLogradouro(objetos[7]);
-                        consulta.setComplemento(objetos[8]);
-                        consulta.setBairro(objetos[9]);
-                        consulta.setMunicipio(objetos[10]);
-                        consulta.setLatitude(objetos[11]);
-                        consulta.setLongitude(objetos[12]);
-                        consulta.setUf(objetos[13]);
-                        consulta.setRegiao(objetos[14]);
-                        consulta.addEnsaio(getEnsaio(objetos));
-                        idsSalvos.add(objetos[1]);
-                        consultas.add(consulta);
-                    } else {
-                        if (consultas.size() > 0) {
-                            for (ConsultaTO consultaTO : consultas) {
-                                if (idsSalvos.stream().anyMatch(id -> id.equals(consultaTO.getIdNumeric()))) {
-                                    consultaTO.addEnsaio(getEnsaio(objetos));
-                                    break;
-                                }
+                if (!verificarIdsInserido(objetos[1])) {
+                    consulta = new ConsultaTO();
+                    consulta.setDataColeta(LocalDate.parse(objetos[0]));
+                    consulta.setIdNumeric(objetos[1]);
+                    consulta.setGrupoProduto(TipoCombustivel.fromString(objetos[2].toUpperCase()));
+                    consulta.setProduto(objetos[3]);
+                    consulta.setRazaoSocialPosto(objetos[4]);
+                    consulta.setCnpjPosto(objetos[5].replace(".", "").replace("-", "").replace("/", ""));
+                    consulta.setDistribuidora(objetos[6]);
+                    consulta.setLogradouro(objetos[7]);
+                    consulta.setComplemento(objetos[8]);
+                    consulta.setBairro(objetos[9]);
+                    consulta.setMunicipio(objetos[10]);
+                    consulta.setLatitude(objetos[11]);
+                    consulta.setLongitude(objetos[12]);
+                    consulta.setUf(objetos[13]);
+                    consulta.setRegiao(objetos[14]);
+                    consulta.addEnsaio(getEnsaio(objetos));
+                    idsSalvos.add(objetos[1]);
+                    consultas.add(consulta);
+                } else {
+                    if (consultas.size() > 0) {
+                        for (ConsultaTO consultaTO : consultas) {
+                            if (idsSalvos.stream().anyMatch(id -> id.equals(consultaTO.getIdNumeric()))) {
+                                consultaTO.addEnsaio(getEnsaio(objetos));
+                                break;
                             }
                         }
                     }
                 }
-                qtdLinhas++;
             }
+            qtdLinhas++;
         }
         reader.close();
         return consultas;

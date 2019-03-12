@@ -22,18 +22,19 @@ public class ConsultaTask {
 
     private static final Logger logger = LogManager.getLogger(ConsultaTask.class);
 
-    @Scheduled(cron = "0 56 11 8 * ?", zone = TIME_ZONE)
+    @Scheduled(cron = "0 46 12 11 * ?", zone = TIME_ZONE)
     public void getFile() {
         logger.info("Iniciando consulta de Arquivos PMQC " + LocalDateTime.now());
         service.getUrls().forEach(url -> {
             try {
                 final List<ConsultaTO> consultas = service.consultarArquivos(url);
                 consultas.forEach(consultaTO -> service.salvarEstabelecimento(consultaTO));
-                service.salvarArquivo(url.trim().substring(49));
+                service.salvarArquivo(url.trim().split("/")[6]);
             } catch (ConnectException c) {
                 logger.warn("Erro na na conexão", c);
                 getFile();
             } catch (Exception e) {
+                e.printStackTrace();
                 logger.error(e);
             }
 

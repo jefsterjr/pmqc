@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.study.pmqc.controller.service.EstabelecimentoService;
-import org.study.pmqc.model.entities.Estabelecimento;
+import org.study.pmqc.model.dto.EstabelecimentoTO;
+import org.study.pmqc.model.mapper.EstabelecimentoMapper;
 
 import java.util.List;
 
@@ -19,9 +20,12 @@ public class EstabelecimentoController {
     @Autowired
     private EstabelecimentoService service;
 
+    private EstabelecimentoMapper mapper;
+
     @GetMapping
-    public @ResponseBody ResponseEntity<List<Estabelecimento>> getEstabelecimentos(){
-        return new ResponseEntity<>(service.getEstabelecimentos(), HttpStatus.OK);
+    public @ResponseBody ResponseEntity<List<EstabelecimentoTO>> getEstabelecimentos(){
+
+        return new ResponseEntity<>(mapper.toDTO(service.getEstabelecimentos()), HttpStatus.OK);
     }
 
 }
